@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
-import { mouse, Point } from '@nut-tree-fork/nut-js';
+import { mouse, Point, keyboard, Key } from '@nut-tree-fork/nut-js';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -55,6 +55,18 @@ io.on('connection', (socket) => {
       await mouse.leftClick();
     } catch (e) {
       console.error('Mouse click error:', e);
+    }
+  });
+
+  socket.on('typeText', async (data) => {
+    try {
+      await keyboard.type(data.text);
+      if (data.sendEnter) {
+        await keyboard.pressKey(Key.Enter);
+        await keyboard.releaseKey(Key.Enter);
+      }
+    } catch (e) {
+      console.error('Keyboard error:', e);
     }
   });
 

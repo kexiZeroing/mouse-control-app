@@ -2,15 +2,28 @@
   <div class="container">
     <h1>Mouse Control</h1>
     <p>Connect to: {{ serverAddress }}</p>
-    <div
-      class="control-pad" 
-      @touchstart="startMove" 
-      @touchmove="handleMove" 
-      @touchend="stopMove"
-      @click="handleClick"
-    >
-      <div class="cursor" :style="cursorStyle"></div>
+    
+    <div class="controls">
+      <div
+        class="control-pad" 
+        @touchstart="startMove" 
+        @touchmove="handleMove" 
+        @touchend="stopMove"
+        @click="handleClick"
+      >
+        <div class="cursor" :style="cursorStyle"></div>
+      </div>
+
+      <div class="keyboard-input">
+        <input 
+          v-model="inputText" 
+          placeholder="Type here..."
+        >
+        <button @click="sendText(false)">Send</button>
+        <button @click="sendText(true)">Send + Enter</button>
+      </div>
     </div>
+    
     <p>Status: {{ status }}</p>
   </div>
 </template>
@@ -31,6 +44,7 @@ export default {
       // the ratio between the physical movement of your finger on the touchpad 
       // and the resulting movement of the mouse cursor on the PC screen.
       sensitivity: 3,
+      inputText: ''
     }
   },
   computed: {
@@ -85,6 +99,12 @@ export default {
     },
     handleClick() {
       this.socket.emit('mouseClick');
+    },
+    sendText(sendEnter) {
+      this.socket.emit('typeText', { 
+        text: this.inputText,
+        sendEnter: sendEnter
+      });
     }
   },
   beforeUnmount() {
@@ -100,6 +120,12 @@ export default {
   padding: 20px;
   max-width: 400px;
   margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .control-pad {
@@ -120,9 +146,13 @@ export default {
   transform: translate(-50%, -50%);
 }
 
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
+.keyboard-input {
+  display: flex;
+  gap: 10px;
+}
+
+.keyboard-input input {
+  flex: 1;
+  padding: 5px;
 }
 </style>
