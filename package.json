@@ -1,0 +1,9 @@
+{
+  "name": "mouse-control-app",
+  "version": "1.0.0",
+  "scripts": {
+    "build:client": "cd client && npm run build",
+    "start:server": "cd server && npm start",
+    "start": "npm run build:client && npm run start:server"
+  }
+}
